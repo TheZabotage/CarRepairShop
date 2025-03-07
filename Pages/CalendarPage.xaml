@@ -5,69 +5,100 @@
              xmlns:viewmodels="clr-namespace:CarRepairShop.ViewModels"
              Title="{Binding Title}">
 
-    <ContentPage.Content>
-        <Grid RowDefinitions="Auto,Auto,*" Padding="20">
-            <!-- Header -->
-            <Label Text="Task Calendar" Grid.Row="0" Style="{StaticResource HeaderLabel}" />
+	<ContentPage.Content>
+		<Grid RowDefinitions="Auto,Auto,*" Padding="20">
+			<!-- Header -->
+			<Label Text="Task Calendar" Grid.Row="0" Style="{StaticResource HeaderLabel}" />
 
-            <!-- Date Selection -->
-            <Frame Grid.Row="1">
-                <Grid ColumnDefinitions="*,Auto">
-                    <StackLayout Grid.Column="0">
-                        <Label Text="Select a Date:" />
-                        <DatePicker Date="{Binding SelectedDate}" Format="D" />
-                    </StackLayout>
+			<!-- Date Selection -->
+			<Frame Grid.Row="1">
+				<Grid ColumnDefinitions="*,Auto">
+					<StackLayout Grid.Column="0">
+						<Label Text="Select a Date:" />
+						<DatePicker Date="{Binding SelectedDate}" Format="D" />
+					</StackLayout>
 
-                    <Button Text="Return to Main Page" 
+					<Button Text="Return to Main Page"
                             Clicked="OnReturnToMainPage"
                             BackgroundColor="{StaticResource SecondaryColor}"
                             VerticalOptions="Center"
                             Grid.Column="1" />
-                </Grid>
-            </Frame>
+				</Grid>
+			</Frame>
 
-            <!-- Task List -->
-            <Frame Grid.Row="2">
-                <Grid RowDefinitions="Auto,*">
-                    <Label Text="Scheduled Tasks" Style="{StaticResource SubHeaderLabel}" Grid.Row="0" />
+			<!-- Task List -->
+			<Frame Grid.Row="2">
+				<Grid RowDefinitions="Auto,*,Auto">
+					<Label Text="Scheduled Tasks" Style="{StaticResource SubHeaderLabel}" Grid.Row="0" />
 
-                    <ListView ItemsSource="{Binding Tasks}" 
+					<!-- No tasks message -->
+					<Label Text="{Binding StatusMessage}"
+                           IsVisible="{Binding HasNoTasks}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="{StaticResource TextSecondaryColor}"
+                           Grid.Row="1" />
+
+					<!-- Tasks list -->
+					<ListView ItemsSource="{Binding Tasks}"
                               Grid.Row="1"
                               SelectionMode="Single"
-                              HasUnevenRows="True">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <ViewCell>
-                                    <Grid Padding="10" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
-                                        <Label Text="{Binding CustomerName}" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" />
-                                        <Label Text="{Binding CarInfo}" Grid.Row="1" Grid.Column="0" />
-                                        <Label Text="{Binding RegistrationNumber}" Grid.Row="1" Grid.Column="1" />
-                                        <Label Text="{Binding Description}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
-                                        <Label Text="{Binding ScheduledDateTime, StringFormat='{0:hh:mm tt}'}" 
-                                               Grid.Row="0" 
-                                               Grid.Column="1" 
-                                               FontAttributes="Bold" 
-                                               TextColor="{StaticResource PrimaryColor}" />
+                              HasUnevenRows="True"
+                              IsVisible="{Binding HasNoTasks, Converter={StaticResource ObjectNotNullConverter}, ConverterParameter=true}">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<ViewCell>
+									<Frame Margin="2" Padding="10" BorderColor="{StaticResource SecondaryColor}">
+										<Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+											<Label Text="{Binding CustomerName}"
+                                                   FontAttributes="Bold"
+                                                   Grid.Row="0"
+                                                   Grid.Column="0" />
 
-                                        <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer 
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CalendarViewModel}}, Path=ViewInvoiceCommand}" 
-                                                CommandParameter="{Binding .}" />
-                                        </Grid.GestureRecognizers>
-                                    </Grid>
-                                </ViewCell>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </Frame>
+											<Label Text="{Binding ScheduledDateTime, StringFormat='{0:hh:mm tt}'}"
+                                                   Grid.Row="0"
+                                                   Grid.Column="1"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{StaticResource PrimaryColor}" />
 
-            <!-- Activity Indicator -->
-            <ActivityIndicator IsRunning="{Binding IsBusy}" 
-                               IsVisible="{Binding IsBusy}" 
-                               HorizontalOptions="Center" 
+											<StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+												<Label Text="{Binding CarInfo}" />
+												<Label Text=" | " />
+												<Label Text="{Binding RegistrationNumber}" />
+											</StackLayout>
+
+											<Label Text="{Binding Description}"
+                                                   Grid.Row="2"
+                                                   Grid.Column="0"
+                                                   Grid.ColumnSpan="2" />
+
+											<Grid.GestureRecognizers>
+												<TapGestureRecognizer
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CalendarViewModel}}, Path=ViewInvoiceCommand}"
+                                                    CommandParameter="{Binding .}" />
+											</Grid.GestureRecognizers>
+										</Grid>
+									</Frame>
+								</ViewCell>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+
+					<!-- Status message for errors -->
+					<Label Text="{Binding StatusMessage}"
+                           IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotNullOrEmptyBoolConverter}}"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource TertiaryColor}"
+                           Grid.Row="2" />
+				</Grid>
+			</Frame>
+
+			<!-- Activity Indicator -->
+			<ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               HorizontalOptions="Center"
                                VerticalOptions="Center"
                                Grid.Row="2" />
-        </Grid>
-    </ContentPage.Content>
+		</Grid>
+	</ContentPage.Content>
 </ContentPage>

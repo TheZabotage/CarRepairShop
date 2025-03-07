@@ -16,6 +16,8 @@ namespace CarRepairShop.Pages
         protected override void OnAppearing()
         {
             base.OnAppearing();
+
+            // Reload data every time the page appears
             _viewModel.LoadTasksForDateCommand.Execute(null);
         }
 

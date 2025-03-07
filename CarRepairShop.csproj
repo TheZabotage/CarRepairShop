@@ -81,7 +81,7 @@
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\InvoicePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+	  </MauiXaml>	
 	</ItemGroup>
 
 </Project>

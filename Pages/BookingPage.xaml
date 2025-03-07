@@ -1,81 +1,12 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CarRepairShop.Pages.BookingPage"
-             xmlns:viewmodels="clr-namespace:CarRepairShop.ViewModels"
-             Title="{Binding Title}">
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-    <ContentPage.Content>
-        <ScrollView>
-            <StackLayout Padding="20">
-                <!-- Header -->
-                <Label Text="Book New Repair Task" Style="{StaticResource HeaderLabel}" />
-
-                <!-- Customer Information -->
-                <Frame>
-                    <StackLayout>
-                        <Label Text="Customer Information" Style="{StaticResource SubHeaderLabel}" />
-
-                        <Label Text="Customer Name:" />
-                        <Entry Text="{Binding CustomerName}" Placeholder="Enter customer name" />
-
-                        <Label Text="Customer Address:" />
-                        <Editor Text="{Binding CustomerAddress}" Placeholder="Enter customer address" AutoSize="TextChanges" HeightRequest="80" />
-                    </StackLayout>
-                </Frame>
-
-                <!-- Car Information -->
-                <Frame>
-                    <StackLayout>
-                        <Label Text="Car Information" Style="{StaticResource SubHeaderLabel}" />
-
-                        <Label Text="Car Make:" />
-                        <Entry Text="{Binding CarMake}" Placeholder="Enter car make" />
-
-                        <Label Text="Car Model:" />
-                        <Entry Text="{Binding CarModel}" Placeholder="Enter car model" />
-
-                        <Label Text="Registration Number:" />
-                        <Entry Text="{Binding RegistrationNumber}" Placeholder="Enter registration number" />
-                    </StackLayout>
-                </Frame>
-
-                <!-- Task Information -->
-                <Frame>
-                    <StackLayout>
-                        <Label Text="Task Information" Style="{StaticResource SubHeaderLabel}" />
-
-                        <Label Text="Date:" />
-                        <DatePicker Date="{Binding ScheduledDate}" />
-
-                        <Label Text="Time:" />
-                        <TimePicker Time="{Binding ScheduledTime}" />
-
-                        <Label Text="Description:" />
-                        <Editor Text="{Binding TaskDescription}" Placeholder="Enter task description" AutoSize="TextChanges" HeightRequest="100" />
-                    </StackLayout>
-                </Frame>
-
-                <!-- Actions -->
-                <Grid ColumnDefinitions="*,*" Margin="0,20,0,0" ColumnSpacing="10">
-                    <Button Text="Book Task" Command="{Binding BookTaskCommand}" Grid.Column="0" />
-                    <Button Text="Return to Main Page" 
-                            Clicked="OnReturnToMainPage" 
-                            BackgroundColor="{StaticResource SecondaryColor}"
-                            Grid.Column="1" />
-                </Grid>
-
-                <!-- Status Message -->
-                <Label Text="{Binding BookingMessage}" 
-                       HorizontalOptions="Center" 
-                       Margin="0,10"
-                       TextColor="{StaticResource PrimaryColor}"
-                       FontAttributes="Bold"
-                       IsVisible="{Binding BookingMessage, Converter={StaticResource StringNotNullOrEmptyBoolConverter}}" />
-
-                <!-- Activity Indicator -->
-                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" />
-            </StackLayout>
-        </ScrollView>
-    </ContentPage.Content>
-</ContentPage>
+namespace CarRepairShop.Pages
+{
+    class BookingPage
+    {
+    }
+}
