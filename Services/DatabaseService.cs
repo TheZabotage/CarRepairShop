@@ -112,19 +112,28 @@ namespace CarRepairShop.Services
 
             foreach (var task in tasks)
             {
+                // Get the car associated with this specific task
                 var car = await GetCarAsync(task.CarId);
-                var customer = await GetCustomerAsync(car.CustomerId);
 
-                displayModels.Add(new TaskDisplayModel
+                if (car != null)
                 {
-                    Id = task.Id,
-                    CustomerName = customer.Name,
-                    CarInfo = $"{car.Make} {car.Model}",
-                    RegistrationNumber = car.RegistrationNumber,
-                    ScheduledDateTime = task.ScheduledDateTime,
-                    Description = task.Description,
-                    Status = task.Status
-                });
+                    // Get the customer associated with this specific car
+                    var customer = await GetCustomerAsync(car.CustomerId);
+
+                    if (customer != null)
+                    {
+                        displayModels.Add(new TaskDisplayModel
+                        {
+                            Id = task.Id,
+                            CustomerName = customer.Name ?? "Unknown Customer",
+                            CarInfo = $"{car.Make} {car.Model}",
+                            RegistrationNumber = car.RegistrationNumber,
+                            ScheduledDateTime = task.ScheduledDateTime,
+                            Description = task.Description,
+                            Status = task.Status
+                        });
+                    }
+                }
             }
 
             return displayModels;

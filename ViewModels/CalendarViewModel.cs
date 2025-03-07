@@ -45,9 +45,10 @@ namespace CarRepairShop.ViewModels
                     Tasks.Add(task);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Handle error
+                // Log the exception for debugging
+                System.Diagnostics.Debug.WriteLine($"Error loading tasks: {ex.Message}");
             }
             finally
             {
@@ -63,8 +64,7 @@ namespace CarRepairShop.ViewModels
 
             SelectedTask = task;
 
-            // TODO: Navigate to invoice page with the selected task
-            await Shell.Current.GoToAsync($"///invoice?taskId={task.Id}");
+            await Shell.Current.GoToAsync($"invoice?taskId={task.Id}");
         }
 
         partial void OnSelectedDateChanged(DateTime value)
