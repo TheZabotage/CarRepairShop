@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CarRepairShop.Pages.InvoicePage"
+             xmlns:viewmodels="clr-namespace:CarRepairShop.ViewModels"
+             Title="{Binding Title}">
+
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="20">
+                <!-- Header -->
+                <Label Text="Invoice Details" Style="{StaticResource HeaderLabel}" />
+
+                <!-- Task Information -->
+                <Frame IsVisible="{Binding TaskInfo, Converter={StaticResource ObjectNotNullConverter}}">
+                    <StackLayout>
+                        <Label Text="Task Information" Style="{StaticResource SubHeaderLabel}" />
+
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                            <Label Text="Customer:" Grid.Row="0" Grid.Column="0" FontAttributes="Bold" />
+                            <Label Text="{Binding TaskInfo.CustomerName}" Grid.Row="0" Grid.Column="1" />
+
+                            <Label Text="Vehicle:" Grid.Row="1" Grid.Column="0" FontAttributes="Bold" />
+                            <Label Text="{Binding TaskInfo.CarInfo}" Grid.Row="1" Grid.Column="1" />
+
+                            <Label Text="Reg. Number:" Grid.Row="2" Grid.Column="0" FontAttributes="Bold" />
+                            <Label Text="{Binding TaskInfo.RegistrationNumber}" Grid.Row="2" Grid.Column="1" />
+
+                            <Label Text="Description:" Grid.Row="3" Grid.Column="0" FontAttributes="Bold" />
+                            <Label Text="{Binding TaskInfo.Description}" Grid.Row="3" Grid.Column="1" />
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Work Details -->
+                <Frame>
+                    <StackLayout>
+                        <Label Text="Work Performed" Style="{StaticResource SubHeaderLabel}" />
+
+                        <Label Text="Mechanic Name:" />
+                        <Entry Text="{Binding MechanicName}" Placeholder="Enter mechanic name" />
+
+                        <Label Text="Hours Worked:" />
+                        <Entry Text="{Binding HoursWorked}" Keyboard="Numeric" Placeholder="Enter hours worked" />
+
+                        <Label Text="Hourly Rate:" />
+                        <Entry Text="{Binding HourlyRate}" Keyboard="Numeric" Placeholder="Enter hourly rate" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Materials -->
+                <Frame>
+                    <StackLayout>
+                        <Label Text="Materials Used" Style="{StaticResource SubHeaderLabel}" />
+
+                        <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <Label Text="Description:" Grid.Row="0" Grid.Column="0" />
+                            <Entry Text="{Binding MaterialDescription}" Placeholder="Material description" Grid.Row="1" Grid.Column="0" />
+
+                            <Label Text="Price:" Grid.Row="0" Grid.Column="1" />
+                            <Entry Text="{Binding MaterialPrice}" Keyboard="Numeric" Placeholder="Price" Grid.Row="1" Grid.Column="1" WidthRequest="100" />
+
+                            <Label Text="Qty:" Grid.Row="0" Grid.Column="2" />
+                            <Entry Text="{Binding MaterialQuantity}" Keyboard="Numeric" Placeholder="Qty" Grid.Row="1" Grid.Column="2" WidthRequest="60" />
+
+                            <Button Text="Add Material" Command="{Binding AddMaterialCommand}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" BackgroundColor="{StaticResource PrimaryColor}" Margin="0,10" />
+
+                        <!-- Materials List -->
+                        <CollectionView ItemsSource="{Binding Materials}" 
+                                        EmptyView="No materials added">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="5" ColumnDefinitions="*,Auto,Auto,Auto">
+                                        <Label Text="{Binding Description}" Grid.Column="0" VerticalOptions="Center" />
+                                        <Label Text="{Binding Price, StringFormat='${0:F2}'}" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Margin="5,0" />
+                                        <Label Text="{Binding Quantity}" Grid.Column="2" VerticalOptions="Center" HorizontalOptions="End" Margin="5,0" />
+                                        <Label Text="{Binding Price, Converter={StaticResource MultiplyByConverter}, ConverterParameter={Binding Quantity}, StringFormat='${0:F2}'}" 
+                                               Grid.Column="3" 
+                                               VerticalOptions="Center" 
+                                               HorizontalOptions="End" 
+                                               Margin="5,0" />
+
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:InvoiceViewModel}}, Path=RemoveMaterialCommand}" 
+                                                                  CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Total -->
+                <Frame>
+                    <StackLayout>
+                        <Label Text="Invoice Summary" Style="{StaticResource SubHeaderLabel}" />
+
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="Total Cost:" Grid.Row="0" Grid.Column="0" FontAttributes="Bold" />
+                            <Label Text="{Binding TotalCost, StringFormat='${0:F2}'}" 
+                                   Grid.Row="0" 
+                                   Grid.Column="1" 
+                                   TextColor="{StaticResource PrimaryColor}" 
+                                   FontAttributes="Bold" 
+                                   FontSize="18" />
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Actions -->
+                <Grid ColumnDefinitions="*,*" Margin="0,20,0,0" ColumnSpacing="10">
+                    <Button Text="Save Invoice" Command="{Binding SaveInvoiceCommand}" Grid.Column="0" />
+                    <Button Text="Return to Main Page" 
+                            Clicked="OnReturnToMainPage" 
+                            BackgroundColor="{StaticResource SecondaryColor}"
+                            Grid.Column="1" />
+                </Grid>
+
+                <!-- Status Message -->
+                <Label Text="{Binding SaveMessage}" 
+                       HorizontalOptions="Center" 
+                       Margin="0,10"
+                       TextColor="{StaticResource PrimaryColor}"
+                       FontAttributes="Bold"
+                       IsVisible="{Binding SaveMessage, Converter={StaticResource StringNotNullOrEmptyBoolConverter}}" />
+
+                <!-- Activity Indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

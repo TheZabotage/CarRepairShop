@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CarRepairShop.Pages.CalendarPage"
+             xmlns:viewmodels="clr-namespace:CarRepairShop.ViewModels"
+             Title="{Binding Title}">
+
+    <ContentPage.Content>
+        <Grid RowDefinitions="Auto,Auto,*" Padding="20">
+            <!-- Header -->
+            <Label Text="Task Calendar" Grid.Row="0" Style="{StaticResource HeaderLabel}" />
+
+            <!-- Date Selection -->
+            <Frame Grid.Row="1">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackLayout Grid.Column="0">
+                        <Label Text="Select a Date:" />
+                        <DatePicker Date="{Binding SelectedDate}" Format="D" />
+                    </StackLayout>
+
+                    <Button Text="Return to Main Page" 
+                            Clicked="OnReturnToMainPage"
+                            BackgroundColor="{StaticResource SecondaryColor}"
+                            VerticalOptions="Center"
+                            Grid.Column="1" />
+                </Grid>
+            </Frame>
+
+            <!-- Task List -->
+            <Frame Grid.Row="2">
+                <Grid RowDefinitions="Auto,*">
+                    <Label Text="Scheduled Tasks" Style="{StaticResource SubHeaderLabel}" Grid.Row="0" />
+
+                    <ListView ItemsSource="{Binding Tasks}" 
+                              Grid.Row="1"
+                              SelectionMode="Single"
+                              HasUnevenRows="True">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid Padding="10" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding CustomerName}" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" />
+                                        <Label Text="{Binding CarInfo}" Grid.Row="1" Grid.Column="0" />
+                                        <Label Text="{Binding RegistrationNumber}" Grid.Row="1" Grid.Column="1" />
+                                        <Label Text="{Binding Description}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
+                                        <Label Text="{Binding ScheduledDateTime, StringFormat='{0:hh:mm tt}'}" 
+                                               Grid.Row="0" 
+                                               Grid.Column="1" 
+                                               FontAttributes="Bold" 
+                                               TextColor="{StaticResource PrimaryColor}" />
+
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CalendarViewModel}}, Path=ViewInvoiceCommand}" 
+                                                CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Frame>
+
+            <!-- Activity Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                               IsVisible="{Binding IsBusy}" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"
+                               Grid.Row="2" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
