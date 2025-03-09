@@ -66,36 +66,48 @@ namespace CarRepairShop.ViewModels
 
             try
             {
-                // Create and save customer
                 var customer = new Customer
                 {
                     Name = CustomerName,
                     Address = CustomerAddress
                 };
+
+                // Save customer and get the newly assigned ID
                 var customerId = await _databaseService.SaveCustomerAsync(customer);
+
+                // Verify customer was saved properly
+                System.Diagnostics.Debug.WriteLine($"Created customer with ID: {customerId}, Name: {CustomerName}");
+
+                // Get the saved customer to verify
+                var savedCustomer = await _databaseService.GetCustomerAsync(customerId);
+                System.Diagnostics.Debug.WriteLine($"Retrieved customer with ID: {customerId}, Name: {savedCustomer?.Name}");
 
                 // Create and save car
                 var car = new Car
                 {
-                    CustomerId = customerId,
+                    CustomerId = customerId, 
                     Make = CarMake,
                     Model = CarModel,
                     RegistrationNumber = RegistrationNumber
                 };
+
                 var carId = await _databaseService.SaveCarAsync(car);
+                System.Diagnostics.Debug.WriteLine($"Created car with ID: {carId}, Make: {CarMake}, Model: {CarModel}, Reg: {RegistrationNumber}");
 
                 // Create and save task
                 var scheduledDateTime = ScheduledDate.Date.Add(ScheduledTime);
                 var repairTask = new RepairTask
                 {
-                    CarId = carId,
+                    CarId = carId, 
                     Description = TaskDescription,
                     ScheduledDateTime = scheduledDateTime,
                     Status = "Scheduled"
                 };
-                await _databaseService.SaveTaskAsync(repairTask);
 
-                // Clear form
+                var taskId = await _databaseService.SaveTaskAsync(repairTask);
+                System.Diagnostics.Debug.WriteLine($"Created task with ID: {taskId}, Description: {TaskDescription}, DateTime: {scheduledDateTime}");
+
+                // Clear form fields
                 CustomerName = string.Empty;
                 CustomerAddress = string.Empty;
                 CarMake = string.Empty;
@@ -109,6 +121,8 @@ namespace CarRepairShop.ViewModels
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in BookTask: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Exception details: {ex}");
                 BookingMessage = $"Error: {ex.Message}";
             }
             finally

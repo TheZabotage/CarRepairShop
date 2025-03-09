@@ -27,7 +27,6 @@ namespace CarRepairShop.Services
             // Get the database path
             var databasePath = Path.Combine(FileSystem.AppDataDirectory, "CarRepairShop.db");
             // Where is the database stored?
-
             Console.WriteLine($"DATABASE PATH: {databasePath}");
 
 
@@ -50,15 +49,92 @@ namespace CarRepairShop.Services
                 await InitializeAsync();
         }
 
+        // PUrges the database and recreates all tables, debugging purposes
+        public async Task PurgeDatabase()
+        {
+            await EnsureInitializedAsync();
+
+            try
+            {
+                // Drop all tables
+                await _database.DropTableAsync<Material>();
+                await _database.DropTableAsync<CompletedWork>();
+                await _database.DropTableAsync<RepairTask>();
+                await _database.DropTableAsync<Car>();
+                await _database.DropTableAsync<Customer>();
+
+                // Recreate tables
+                await _database.CreateTableAsync<Customer>();
+                await _database.CreateTableAsync<Car>();
+                await _database.CreateTableAsync<RepairTask>();
+                await _database.CreateTableAsync<CompletedWork>();
+                await _database.CreateTableAsync<Material>();
+
+                System.Diagnostics.Debug.WriteLine("Database purged successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error purging database: {ex.Message}");
+            }
+        }
+
+
         // Customer methods
         public async Task<int> SaveCustomerAsync(Customer customer)
         {
             await EnsureInitializedAsync();
 
-            if (customer.Id != 0)
-                return await _database.UpdateAsync(customer);
-            else
-                return await _database.InsertAsync(customer);
+            // Make sure the customer object isn't null
+            if (customer == null)
+            {
+                throw new ArgumentNullException(nameof(customer), "Customer cannot be null");
+            }
+
+            try
+            {
+                if (customer.Id != 0)
+                {
+                    // This is an update to an existing customer
+                    await _database.UpdateAsync(customer);
+                    System.Diagnostics.Debug.WriteLine($"Updated customer with ID: {customer.Id}, Name: {customer.Name}");
+                    return customer.Id;
+                }
+                else
+                {
+                    // This is a new customer
+                    System.Diagnostics.Debug.WriteLine($"Inserting new customer with Name: {customer.Name}");
+
+                    // Insert the customer
+                    await _database.InsertAsync(customer);
+
+                    var lastId = await _database.ExecuteScalarAsync<int>("SELECT last_insert_rowid()");
+                    System.Diagnostics.Debug.WriteLine($"Last inserted row ID: {lastId}");
+
+                    // Update our customer object with this ID
+                    customer.Id = lastId;
+
+                    // Double-check that the customer was actually inserted
+                    var savedCustomer = await _database.Table<Customer>()
+                                                      .Where(c => c.Id == lastId)
+                                                      .FirstOrDefaultAsync();
+
+                    if (savedCustomer != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Verified customer saved with ID: {savedCustomer.Id}, Name: {savedCustomer.Name}");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"WARNING: Could not verify customer with ID {lastId} was saved!");
+                    }
+
+                    return lastId;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error saving customer: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<Customer> GetCustomerAsync(int id)
@@ -78,10 +154,56 @@ namespace CarRepairShop.Services
         {
             await EnsureInitializedAsync();
 
-            if (car.Id != 0)
-                return await _database.UpdateAsync(car);
-            else
-                return await _database.InsertAsync(car);
+            // Make sure the car object isn't null
+            if (car == null)
+            {
+                throw new ArgumentNullException(nameof(car), "Car cannot be null");
+            }
+
+            try
+            {
+                if (car.Id != 0)
+                {
+                    // This is an update to an existing car
+                    await _database.UpdateAsync(car);
+                    System.Diagnostics.Debug.WriteLine($"Updated car with ID: {car.Id}, Make: {car.Make}, Model: {car.Model}");
+                    return car.Id;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Inserting new car with Make: {car.Make}, Model: {car.Model}, CustomerID: {car.CustomerId}");
+
+                    // Insert the car
+                    await _database.InsertAsync(car);
+
+                    var lastId = await _database.ExecuteScalarAsync<int>("SELECT last_insert_rowid()");
+                    System.Diagnostics.Debug.WriteLine($"Last inserted row ID: {lastId}");
+
+                    // Update our car object with this ID
+                    car.Id = lastId;
+
+                    // Double-check that the car was actually inserted
+                    var savedCar = await _database.Table<Car>()
+                                                 .Where(c => c.Id == lastId)
+                                                 .FirstOrDefaultAsync();
+
+                    if (savedCar != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Verified car saved with ID: {savedCar.Id}, Make: {savedCar.Make}, CustomerID: {savedCar.CustomerId}");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"WARNING: Could not verify car with ID {lastId} was saved!");
+                    }
+
+                    return lastId;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error saving car: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<Car> GetCarAsync(int id)
@@ -101,10 +223,56 @@ namespace CarRepairShop.Services
         {
             await EnsureInitializedAsync();
 
-            if (task.Id != 0)
-                return await _database.UpdateAsync(task);
-            else
-                return await _database.InsertAsync(task);
+            // Make sure the task object isn't null
+            if (task == null)
+            {
+                throw new ArgumentNullException(nameof(task), "Task cannot be null");
+            }
+
+            try
+            {
+                if (task.Id != 0)
+                {
+                    // This is an update to an existing task
+                    await _database.UpdateAsync(task);
+                    System.Diagnostics.Debug.WriteLine($"Updated task with ID: {task.Id}, Description: {task.Description}");
+                    return task.Id;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Inserting new task with Description: {task.Description}, CarID: {task.CarId}");
+
+                    // Insert the task
+                    await _database.InsertAsync(task);
+
+                    var lastId = await _database.ExecuteScalarAsync<int>("SELECT last_insert_rowid()");
+                    System.Diagnostics.Debug.WriteLine($"Last inserted row ID: {lastId}");
+
+                    // Update our task object with this ID
+                    task.Id = lastId;
+
+                    // Double-check that the task was actually inserted
+                    var savedTask = await _database.Table<RepairTask>()
+                                                  .Where(t => t.Id == lastId)
+                                                  .FirstOrDefaultAsync();
+
+                    if (savedTask != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Verified task saved with ID: {savedTask.Id}, Description: {savedTask.Description}, CarID: {savedTask.CarId}");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"WARNING: Could not verify task with ID {lastId} was saved!");
+                    }
+
+                    return lastId;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error saving task: {ex.Message}");
+                throw; // Re-throw to let caller handle it
+            }
         }
 
         public async Task<RepairTask> GetTaskAsync(int id)
@@ -161,10 +329,10 @@ namespace CarRepairShop.Services
                                 Id = task.Id,
                                 CustomerName = customer.Name ?? "Unknown Customer",
                                 CarInfo = $"{car.Make} {car.Model}",
-                                RegistrationNumber = car.RegistrationNumber,
+                                RegistrationNumber = car.RegistrationNumber ?? "Unknown",
                                 ScheduledDateTime = task.ScheduledDateTime,
-                                Description = task.Description,
-                                Status = task.Status
+                                Description = task.Description ?? "No description",
+                                Status = task.Status ?? "Unknown Status"
                             };
 
                             // Add it to our list
@@ -175,13 +343,11 @@ namespace CarRepairShop.Services
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"Error processing task {task.Id}: {ex.Message}");
-                    // Continue processing other tasks even if one fails
                 }
             }
 
             return displayModels;
         }
-
         // CompletedWork methods
         public async Task<int> SaveCompletedWorkAsync(CompletedWork work)
         {
@@ -220,8 +386,7 @@ namespace CarRepairShop.Services
     // Helper extension method
     public static class TaskExtensions
     {
-        // This method allows us to fire and forget tasks without awaiting them
-        // while still handling exceptions
+        //Fire and forget tasks without awaiting them
         public static void SafeFireAndForget(this Task task, bool returnToCallingContext, Action<Exception> onException = null)
         {
             task.ContinueWith(t =>

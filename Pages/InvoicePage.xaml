@@ -75,9 +75,9 @@
                                 <DataTemplate>
                                     <Grid Padding="5" ColumnDefinitions="*,Auto,Auto,Auto">
                                         <Label Text="{Binding Description}" Grid.Column="0" VerticalOptions="Center" />
-                                        <Label Text="{Binding Price, StringFormat='${0:F2}'}" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Margin="5,0" />
+                                        <Label Text="{Binding Price, StringFormat='DKK{0:F2}'}" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Margin="5,0" />
                                         <Label Text="{Binding Quantity}" Grid.Column="2" VerticalOptions="Center" HorizontalOptions="End" Margin="5,0" />
-                                        <Label Text="{Binding Price, Converter={StaticResource MultiplyByConverter}, ConverterParameter={Binding Quantity}, StringFormat='${0:F2}'}" 
+                                        <Label Text="{Binding Price, Converter={StaticResource MultiplyByConverter}, ConverterParameter={Binding Quantity}, StringFormat='DKK{0:F2}'}" 
                                                Grid.Column="3" 
                                                VerticalOptions="Center" 
                                                HorizontalOptions="End" 
@@ -101,7 +101,7 @@
 
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
                             <Label Text="Total Cost:" Grid.Row="0" Grid.Column="0" FontAttributes="Bold" />
-                            <Label Text="{Binding TotalCost, StringFormat='${0:F2}'}" 
+                            <Label Text="{Binding TotalCost, StringFormat='DKK{0:F2}'}" 
                                    Grid.Row="0" 
                                    Grid.Column="1" 
                                    TextColor="{StaticResource PrimaryColor}" 

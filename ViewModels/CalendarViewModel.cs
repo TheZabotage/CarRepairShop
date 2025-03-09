@@ -48,22 +48,22 @@ namespace CarRepairShop.ViewModels
             {
                 // Clear existing data
                 Tasks.Clear();
-                
+
                 // Fetch tasks for the selected date
                 var tasks = await _databaseService.GetTaskDisplayModelsForDateAsync(SelectedDate);
-                
+
                 Debug.WriteLine($"Retrieved {tasks.Count} tasks for {SelectedDate.ToShortDateString()}");
-                
+
                 // Add each task to the collection
                 foreach (var task in tasks)
                 {
                     Debug.WriteLine($"Task: {task.Id}, Customer: {task.CustomerName}, Car: {task.CarInfo}, Reg: {task.RegistrationNumber}");
                     Tasks.Add(task);
                 }
-                
+
                 // Update the HasNoTasks property
                 HasNoTasks = Tasks.Count == 0;
-                
+
                 if (HasNoTasks)
                 {
                     StatusMessage = "No tasks scheduled for this date.";

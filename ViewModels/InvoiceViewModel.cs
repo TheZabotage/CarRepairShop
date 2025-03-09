@@ -72,7 +72,7 @@ namespace CarRepairShop.ViewModels
 
             // Clear material input fields
             MaterialDescription = string.Empty;
-            MaterialPrice = 0;
+            MaterialPrice = 0.0;
             MaterialQuantity = 1;
 
             CalculateTotalCost();

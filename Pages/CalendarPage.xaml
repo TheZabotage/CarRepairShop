@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CarRepairShop.Pages.CalendarPage"
              xmlns:viewmodels="clr-namespace:CarRepairShop.ViewModels"
+             xmlns:models="clr-namespace:CarRepairShop.ViewModels"
              Title="{Binding Title}">
 
 	<ContentPage.Content>
@@ -40,49 +41,46 @@
                            Grid.Row="1" />
 
 					<!-- Tasks list -->
-					<ListView ItemsSource="{Binding Tasks}"
-                              Grid.Row="1"
-                              SelectionMode="Single"
-                              HasUnevenRows="True"
-                              IsVisible="{Binding HasNoTasks, Converter={StaticResource ObjectNotNullConverter}, ConverterParameter=true}">
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<ViewCell>
-									<Frame Margin="2" Padding="10" BorderColor="{StaticResource SecondaryColor}">
-										<Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
-											<Label Text="{Binding CustomerName}"
-                                                   FontAttributes="Bold"
-                                                   Grid.Row="0"
-                                                   Grid.Column="0" />
+					<CollectionView ItemsSource="{Binding Tasks}"
+                                    Grid.Row="1"
+                                    SelectionMode="Single"
+                                    IsVisible="{Binding HasNoTasks, Converter={StaticResource ObjectNotNullConverter}, ConverterParameter=true}">
+						<CollectionView.ItemTemplate>
+							<DataTemplate x:DataType="models:TaskDisplayModel">
+								<Frame Margin="5" Padding="10" BorderColor="{StaticResource SecondaryColor}">
+									<Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+										<Label Text="{Binding CustomerName}"
+                                               FontAttributes="Bold"
+                                               Grid.Row="0"
+                                               Grid.Column="0" />
 
-											<Label Text="{Binding ScheduledDateTime, StringFormat='{0:hh:mm tt}'}"
-                                                   Grid.Row="0"
-                                                   Grid.Column="1"
-                                                   FontAttributes="Bold"
-                                                   TextColor="{StaticResource PrimaryColor}" />
+										<Label Text="{Binding ScheduledDateTime, StringFormat='{0:hh:mm tt}'}"
+                                               Grid.Row="0"
+                                               Grid.Column="1"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource PrimaryColor}" />
 
-											<StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
-												<Label Text="{Binding CarInfo}" />
-												<Label Text=" | " />
-												<Label Text="{Binding RegistrationNumber}" />
-											</StackLayout>
+										<StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+											<Label Text="{Binding CarInfo}" />
+											<Label Text=" | " />
+											<Label Text="{Binding RegistrationNumber}" />
+										</StackLayout>
 
-											<Label Text="{Binding Description}"
-                                                   Grid.Row="2"
-                                                   Grid.Column="0"
-                                                   Grid.ColumnSpan="2" />
+										<Label Text="{Binding Description}"
+                                               Grid.Row="2"
+                                               Grid.Column="0"
+                                               Grid.ColumnSpan="2" />
 
-											<Grid.GestureRecognizers>
-												<TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CalendarViewModel}}, Path=ViewInvoiceCommand}"
-                                                    CommandParameter="{Binding .}" />
-											</Grid.GestureRecognizers>
-										</Grid>
-									</Frame>
-								</ViewCell>
+										<Grid.GestureRecognizers>
+											<TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CalendarViewModel}}, Path=ViewInvoiceCommand}"
+                                                CommandParameter="{Binding .}" />
+										</Grid.GestureRecognizers>
+									</Grid>
+								</Frame>
 							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
 
 					<!-- Status message for errors -->
 					<Label Text="{Binding StatusMessage}"

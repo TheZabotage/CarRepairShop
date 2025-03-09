@@ -49,7 +49,7 @@
                         <DatePicker Date="{Binding ScheduledDate}" />
 
                         <Label Text="Time:" />
-                        <TimePicker Time="{Binding ScheduledTime}" />
+                        <TimePicker Time="{Binding ScheduledTime}" Format="HH:mm" />
 
                         <Label Text="Description:" />
                         <Editor Text="{Binding TaskDescription}" Placeholder="Enter task description" AutoSize="TextChanges" HeightRequest="100" />
